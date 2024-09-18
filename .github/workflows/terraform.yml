@@ -1,0 +1,36 @@
+name: Terraform
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  terraform:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Change to Terraform directory
+      run: cd terraform
+
+    - name: Set up Terraform
+      uses: hashicorp/setup-terraform@v1
+      with:
+        cli_config_credentials_token: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Terraform Init
+      working-directory: ./terraform
+      env:
+        GOOGLE_CREDENTIALS: ${{ secrets.GCP_API_TOKEN }}
+      run: terraform init
+
+    - name: Terraform Apply
+      working-directory: ./terraform
+      env:
+        GOOGLE_CREDENTIALS: ${{ secrets.GCP_API_TOKEN }}
+        TF_VAR_function_uri:  ${{ secrets.FUNCTION_URI }}
+        TF_VAR_service_account: ${{ secrets.SERVICE_ACCOUNT }}
+      run: terraform apply -auto-approve

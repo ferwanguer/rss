@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+  <channel>
+    <title>Dummy Feed</title>
+    <description>This is a dummy feed because no blobs were found.</description>
+    <link>http://example.com/</link>
+    <lastBuildDate>Sun, 15 Sep 2024 00:00:00 GMT</lastBuildDate>
+    <item>
+      <title>No Data Available</title>
+      <description>No blobs were found in the specified folder.</description>
+      <link>http://example.com/</link>
+      <pubDate>Sun, 15 Sep 2024 00:00:00 GMT</pubDate>
+    </item>
+  </channel>
+</rss>

@@ -1,0 +1,17 @@
+[
+    {
+        "name": "El Mundo",
+        "rss_link": "https://e00-elmundo.uecdn.es/rss/opinion.xml",
+        "editorial": "right"
+    },
+    {
+        "name": "El Debate",
+        "rss_link": "https://www.eldebate.com/rss/opinion.xml",
+        "editorial": "right"
+    },
+    {
+        "name": "El ABC",
+        "rss_link": "https://www.abc.es/rss/2.0/opinion/",
+        "editorial": "right"
+    }
+]
