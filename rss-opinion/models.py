@@ -2,6 +2,7 @@
 source.py is mainly for testing.
 """
 
+import asyncio
 from datetime import datetime
 import json
 import os
@@ -12,6 +13,7 @@ from utils import download_latest_blob, get_secret, upload_blob
 import logging
 import colorlog
 import tweepy
+from telegram import Bot
 
 #-------------------------------------------------------------------------------------
 # Basic Logging configuration
@@ -70,6 +72,8 @@ class Newspaper:
         self.path = f"{self.formated_name}/{datetime.now().strftime('%Y%m%d%H%M%S')}"
         self.local_path = "/tmp/" + self.path 
         self.latest_feed_path_from_bucket = "/tmp/" +  f'{self.formated_name}/latest_feed'
+        self.telegram_chat_id = get_secret('telegram_chat_id')
+        self.telegram_token = get_secret('telegram_token')
 
         # We download the new feed.xml
 
@@ -127,6 +131,7 @@ class Newspaper:
             logger.info(f"{self.name} has new entries")
             for entry in new_entries:
                 self.create_tweet(entry)
+                self.post_telegram(entry)
 
             logger.info("Finished tweeting, updating RSS file of {self.name}")    
 
@@ -138,8 +143,11 @@ class Newspaper:
         else:
             logger.info(f"{self.name} no news")
 
+    def create_text(self, entry):
+        return f'Nuevo artículo de {entry.author} en {self.name}: {entry.title}\n {entry.link}'
+    
     def create_tweet(self, entry):
-        payload = {"text": f'Nuevo artículo de {entry.author} en {self.name}: {entry.title}\n {entry.link}'}
+        payload = {"text": self.create_text(entry)}
 
         access_token = get_secret("oauth_token")
         access_token_secret = get_secret("oauth_token_secret")
@@ -169,6 +177,18 @@ class Newspaper:
                 logger.info(f"Successful tweet of newspaper {self.name} ")
         except Exception as e:
              logger.error(f"FAILED TO POST TWEET: {e}")
+
+    def post_telegram(self, entry):
+
+        bot = Bot(token=self.telegram_token)
+
+        # Send a message
+        try:
+            message = asyncio.run(bot.send_message(chat_id="@opderecha", text=self.create_text(entry)))
+            if message.message_id:
+                logger.info(f"TELEGRAM POSTED. Message ID: {message.message_id}")
+        except Exception as e:
+            logger.error(f"TELEGRAM FAILED.")
 
 
 
