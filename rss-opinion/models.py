@@ -129,13 +129,14 @@ class Newspaper:
         if new_entries:
 
             logger.info(f"{self.name} has new entries")
+            upload_blob(self.bucket_name,bucket_blob_name=f'{self.path}', local_blob_name=f'{self.local_path}.xml')
             for entry in new_entries:
                 self.create_tweet(entry)
                 self.post_telegram(entry)
 
             logger.info("Finished tweeting, updating RSS file of {self.name}")    
 
-            upload_blob(self.bucket_name,bucket_blob_name=f'{self.path}', local_blob_name=f'{self.local_path}.xml')
+            
             
             logger.info("Adding new entries")
             # Optionally process new_entries here
