@@ -144,7 +144,11 @@ class Newspaper:
             logger.info(f"{self.name} no news")
 
     def create_text(self, entry):
-        return f'Nuevo artículo de {entry.author} en {self.name}: {entry.title}\n {entry.link}'
+        if entry.author:
+            return f'Nuevo artículo de {entry.author} en {self.name}: {entry.title}\n {entry.link}'
+        if entry.creator:
+            f'Nuevo artículo de {entry.creator} en {self.name}: {entry.title}\n {entry.link}'
+    
     
     def create_tweet(self, entry):
         payload = {"text": self.create_text(entry)}

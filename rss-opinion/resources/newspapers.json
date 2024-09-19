@@ -13,5 +13,10 @@
         "name": "El ABC",
         "rss_link": "https://www.abc.es/rss/2.0/opinion/",
         "editorial": "right"
+    },
+    {
+        "name": "Voz pópuli",
+        "rss_link": "https://www.vozpopuli.com/opinion/feed",
+        "editorial": "right"
     }
 ]
