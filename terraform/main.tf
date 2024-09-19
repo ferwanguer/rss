@@ -77,7 +77,7 @@ resource "google_cloud_scheduler_job" "http_job" {
   name        = "http-trigger-job"
   description = "Job to trigger the HTTP Cloud Function"
   time_zone = "Europe/Berlin" # Change to your preferred time zone
-  schedule    = "0 * * * *" # Running once an hour
+  schedule    = "*/5 7-23 * * *" # Running every 5 mins, excluding the nights. 
 
   http_target {
     uri          =  var.function_uri 
