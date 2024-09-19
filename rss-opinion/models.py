@@ -192,7 +192,7 @@ class Newspaper:
             if message.message_id:
                 logger.info(f"TELEGRAM POSTED. Message ID: {message.message_id}")
         except Exception as e:
-            logger.error(f"TELEGRAM FAILED.")
+            logger.error(f"TELEGRAM FAILED.{e}")
 
 
 
