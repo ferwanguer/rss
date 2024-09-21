@@ -80,7 +80,56 @@
             "Cartas a la Directora",
             "Andrés Rábago",
             "Najat El Hachmi"
+          ]  
+    },
+    {
+        "name": "El diario.es",
+        "rss_link": "https://www.eldiario.es/rss/opinion",
+        "editorial": "left",
+        "authors":[
+            "Manel Fontdevila",
+            "Bernardo Vergara",
+            "Raquel Marcos Oliva",
+            "José Luis Martí",
+            "Magis Iglesias",
+            "Enric González",
+            "Elisa Beni",
+            "Antonio Maestre",
+            "Senén Barro Ameneiro",
+            "Manel Fontdevila",
+            "Aldo Conway",
+            "Marco Schwartz",
+            "Valeria Racu",
+            "Alberto Martínez",
+            "Rosa María Artal",
+            "Javier Pérez Royo",
+            "Manel Fontdevila",
+            "Isaac Rosa",
+            "Irene Lozano",
+            "Carlos Sánchez Mato",
+            "Carlos Elordi",
+            "Daniel Fuentes Castro",
+            "Esther Palomera",
+            "Raquel Ejerique",
+            "Ignacio Escolar",
+            "Carlos Victoria Lanzón",
+            "Manel Fontdevila",
+            "Elisa Beni",
+            "Raquel Ejerique",
+            "Alberto Garzón Espinosa",
+            "Javier Valenzuela",
+            "Alejandro Inurrieta",
+            "Neus Tomàs",
+            "José Enrique de Ayala",
+            "Octavio Salazar",
+            "Manel Fontdevila",
+            "Javier Pérez Andújar",
+            "María Eugenia R. Palop",
+            "Isaac Rosa",
+            "Joaquín Urías",
+            "María Ramírez"
           ]
+          
           
         
     }
