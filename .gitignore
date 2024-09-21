@@ -18,3 +18,5 @@ rss-opinion/x-post.py
 rss-opinion/post.py
 rss-opinion/testing.py
 .vscode/settings.json
+rss-opinion/vozpopuli
+rss-opinion/tests.py
