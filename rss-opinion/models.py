@@ -134,7 +134,7 @@ class Newspaper:
             for entry in new_entries:
                 self.post_telegram(entry)
                 
-                if entry.author in self.authors:
+                if entry.author in self.authors and self.editorial == "right":
                     self.create_tweet(entry)
                 
                 
@@ -158,11 +158,18 @@ class Newspaper:
     
     def create_tweet(self, entry):
         payload = {"text": self.create_text(entry)}
-
-        access_token = get_secret("oauth_token")
-        access_token_secret = get_secret("oauth_token_secret")
-        consumer_key = get_secret("consumer_key")
-        consumer_secret = get_secret("consumer_secret")
+        if self.editorial == "right":
+            access_token = get_secret("oauth_token")
+            access_token_secret = get_secret("oauth_token_secret")
+            consumer_key = get_secret("consumer_key")
+            consumer_secret = get_secret("consumer_secret")
+        else:
+            logger.warning("LEFT TWEETS NOT IMPLEMENTED YET")
+            return None
+            # access_token = get_secret("oauth_token")
+            # access_token_secret = get_secret("oauth_token_secret")
+            # consumer_key = get_secret("consumer_key")
+            # consumer_secret = get_secret("consumer_secret")
 
         try:
             # Make the request
