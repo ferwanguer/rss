@@ -191,10 +191,10 @@ class Newspaper:
     def post_telegram(self, entry):
 
         bot = Bot(token=self.telegram_token)
-
+        chat_id = "@opderecha" if self.editorial =="right" else "@opizquierda"
         # Send a message
         try:
-            message = asyncio.run(bot.send_message(chat_id="@opderecha", text=self.create_text(entry)))
+            message = asyncio.run(bot.send_message(chat_id=chat_id, text=self.create_text(entry)))
             if message.message_id:
                 logger.info(f"TELEGRAM POSTED. Message ID: {message.message_id}")
         except Exception as e:

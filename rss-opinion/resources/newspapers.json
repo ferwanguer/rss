@@ -48,5 +48,40 @@
             "Francisco Rosell",
             "Alejo Vidal-Quadras"
         ]
+    },
+    {
+        "name": "El País",
+        "rss_link": "https://feeds.elpais.com/mrss-s/list/ep/site/elpais.com/section/opinion",
+        "editorial": "left",
+        "authors":["Cartas a la Directora",
+            "EL PAÍS",
+            "Flavia Álvarez Pedrosa",
+            "Javier Sampedro",
+            "EL PAÍS",
+            "Antonio Muñoz Molina",
+            "José María Pérez",
+            "Andrea Rizzi",
+            "Marta G. Franco",
+            "Berna González Harbour",
+            "Leila Guerriero",
+            "Ana Iris Simón",
+            "Andrés Rábago",
+            "Cristabel Cartaya",
+            "Luken Ignacio Quintana",
+            "Ignacio Peyró",
+            "Riki Blanco",
+            "Eduardo González de Molina",
+            "Barbara Steenbergen",
+            "Juan José Millás García",
+            "EL PAÍS",
+            "Agustín Sciammarella",
+            "Lola Lafon",
+            "Jose Andrés Rojo",
+            "Cartas a la Directora",
+            "Andrés Rábago",
+            "Najat El Hachmi"
+          ]
+          
+        
     }
 ]
