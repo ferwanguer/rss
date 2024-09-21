@@ -20,3 +20,4 @@ rss-opinion/testing.py
 .vscode/settings.json
 rss-opinion/vozpopuli
 rss-opinion/tests.py
+rss-opinion/telegram_testing.py
