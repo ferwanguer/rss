@@ -64,7 +64,7 @@ class Newspaper:
     """Defining class, it has the name, rss link and editorial
     """
     bucket_name = "rss-feed_opinion"
-    def __init__(self, name: str, rss_link: str, editorial):
+    def __init__(self, name: str, rss_link: str, editorial:str, authors: list = []):
         self.name = name
         self.formated_name = self.format_name()
         self.rss_link = rss_link
@@ -72,6 +72,7 @@ class Newspaper:
         self.path = f"{self.formated_name}/{datetime.now().strftime('%Y%m%d%H%M%S')}"
         self.local_path = "/tmp/" + self.path 
         self.latest_feed_path_from_bucket = "/tmp/" +  f'{self.formated_name}/latest_feed'
+        self.authors = authors
         self.telegram_chat_id = get_secret('telegram_chat_id')
         self.telegram_token = get_secret('telegram_token')
 
@@ -111,7 +112,6 @@ class Newspaper:
             folder_prefix=self.formated_name,
             local_blob_name=f'{self.latest_feed_path_from_bucket}.xml'
         )
-        logger.warning(old_feed_path)
         old_feed = feedparser.parse(old_feed_path)
 
         # Extract unique identifiers
@@ -130,9 +130,14 @@ class Newspaper:
 
             logger.info(f"{self.name} has new entries")
             upload_blob(self.bucket_name,bucket_blob_name=f'{self.path}', local_blob_name=f'{self.local_path}.xml')
+            
             for entry in new_entries:
-                self.create_tweet(entry)
                 self.post_telegram(entry)
+                
+                if entry.author in self.authors:
+                    self.create_tweet(entry)
+                
+                
 
             logger.info("Finished tweeting, updating RSS file of {self.name}")    
 

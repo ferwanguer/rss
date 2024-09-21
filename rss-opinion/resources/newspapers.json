@@ -2,21 +2,51 @@
     {
         "name": "El Mundo",
         "rss_link": "https://e00-elmundo.uecdn.es/rss/opinion.xml",
-        "editorial": "right"
+        "editorial": "right",
+        "authors": ["Jorge Bustos", "Rafa Latorre", "Arcadi Espada", "Iñaki Ellakuría","José Ignacio Torreblanca", "Ricardo F. Colmenero",
+                     "Federico Jiménez Losantos", "Antonio Lucas", "Fernando Palmero", "David Jiménez Torres", "Emilia Landaluce"]
     },
     {
         "name": "El Debate",
         "rss_link": "https://www.eldebate.com/rss/opinion.xml",
-        "editorial": "right"
+        "editorial": "right",
+        "authors":[
+            "Alfonso Ussía",
+            "Antonio R. Naranjo",
+            "Gabriel Albiac",
+            "Ramón Pérez-Maura",
+            "Juan Carlos Girauta",
+            "Bieito Rubido"
+        ]
+        
     },
     {
         "name": "El ABC",
         "rss_link": "https://www.abc.es/rss/2.0/opinion/",
-        "editorial": "right"
+        "editorial": "right",
+        "authors": [      
+            "Ángel Expósito",
+            "Karina Sainz Borgo",
+            "Luis Herrero",
+            "Isabel San Sebastián",
+            "Ignacio Camacho"
+        ]
+        
     },
     {
         "name": "Voz Populi",
         "rss_link": "https://www.vozpopuli.com/opinion/feed",
-        "editorial": "right"
+        "editorial": "right",
+        "authors":[
+            "Fernando Díaz Villanueva",
+            "Manuel Marín",
+            "Gregorio Morán",
+            "José Alejandro Vara",
+            "José María Múgica",
+            "Ignacia De Pano",
+            "Rubén Manso",
+            "Francisco Rosell",
+            "Alejo Vidal-Quadras"
+        ]
     }
 ]
