@@ -150,10 +150,10 @@ class Newspaper:
             logger.info(f"{self.name} no news")
 
     def create_text(self, entry):
-        if entry.author:
+        if self.name != "elabc":
             return f'Nuevo artículo de {entry.author} en {self.name}: {entry.title}\n {entry.link}'
-        if entry.creator:
-            f'Nuevo artículo de {entry.creator} en {self.name}: {entry.title}\n {entry.link}'
+        else:
+            f'Nuevo artículo de {entry.creator} en {self.name}: {entry.title}\n {entry.link}\n\n {entry.description}'
     
     
     def create_tweet(self, entry):
