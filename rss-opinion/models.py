@@ -134,8 +134,8 @@ class Newspaper:
             for entry in new_entries:
                 self.post_telegram(entry)
                 
-                if entry.author in self.authors and self.editorial == "right":
-                    self.create_tweet(entry)
+                # if entry.author in self.authors and self.editorial == "right":
+                    # self.create_tweet(entry)
                 
                 
 
