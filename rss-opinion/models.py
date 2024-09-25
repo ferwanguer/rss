@@ -153,7 +153,7 @@ class Newspaper:
         if self.formated_name != "elabc":
             return f'Nuevo artículo de {entry.author} en {self.name}: {entry.title}\n {entry.link}'
         else:
-            f'Nuevo artículo de {entry.author} en {self.name}: {entry.title}\n {entry.link}\n\n {entry.description}'
+            return f'Nuevo artículo de {entry.author} en {self.name}: {entry.title}\n {entry.link}\n\n {entry.description}'
     
     
     def create_tweet(self, entry):
