@@ -140,12 +140,15 @@ class Newspaper:
                 if self.format_name == "vozpopuli" and entry.author in self.authors:
                     self.post_telegram(entry)
                 
-                # if entry.author in self.authors and self.editorial == "right":
-                    # self.create_tweet(entry)
+                if self.format_name !="vozpopuli":
+                    self.post_telegram(entry)
+                
+                if entry.author in self.authors and self.editorial == "right":
+                    self.create_tweet(entry)
                 
                 
 
-            logger.info("Finished tweeting, updating RSS file of {self.name}")    
+            logger.info(f"Finished tweeting, updating RSS file of {self.name}")    
 
             # Optionally process new_entries here
             return new_entries  # If you need to use them elsewhere
@@ -160,7 +163,10 @@ class Newspaper:
     
     
     def create_tweet(self, entry):
-        payload = {"text": self.create_text(entry)}
+        text = f'Nuevo artículo de {entry.author} en {self.name}: {entry.title}\n {entry.link}'
+
+        payload = {"text": text}
+
         if self.editorial == "right":
             access_token = get_secret("oauth_token")
             access_token_secret = get_secret("oauth_token_secret")
