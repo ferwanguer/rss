@@ -71,22 +71,26 @@ class Newspaper:
         self.editorial = editorial
         self.path = f"{self.formated_name}/{datetime.now().strftime('%Y%m%d%H%M%S')}"
         self.local_path = "/tmp/" + self.path 
-        self.latest_feed_path_from_bucket = "/tmp/" +  f'{self.formated_name}/latest_feed'
+        self.latest_feed_path_from_bucket = "/tmp/" +  f'{self.formated_name}/latest_feed' #Were the blob is downloaded locally 
         self.authors = authors
         self.telegram_chat_id = get_secret('telegram_chat_id')
         self.telegram_token = get_secret('telegram_token')
 
-        # We download the new feed.xml
+        # We download the new feed.xml 
 
-        response = requests.get(self.rss_link, headers={
-    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.121 Safari/537.36'})
+        response = requests.get(self.rss_link, 
+                                headers={
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.121 Safari/537.36'}
+                                )
 
         if response.status_code == 200:
             logger.info(f"Correctly downloaded RSS from {self.name}")
+
             # Saving the resulting text into a file
             os.makedirs(os.path.dirname(f'{self.local_path}.xml'), exist_ok=True)
             with open(f'{self.local_path}.xml', 'w', encoding='utf-8') as file:
                 file.write(response.text)
+            
             self.feed = feedparser.parse(f'{self.local_path}.xml')  
         else: 
             logger.error(f"Coud not retrieve {self.name} RSS")
@@ -98,7 +102,7 @@ class Newspaper:
         return f"Newspaper(name={self.name}, rss_link={self.rss_link}, editorial={self.editorial})"
     
     def format_name(self):
-        """Formats the name and adds the executiontime. Useful to save the rss.
+        """Formats the name. Useful to save the rss.
         """
         transformed_string = self.name.lower().replace(" ", "")
 
@@ -126,13 +130,15 @@ class Newspaper:
         new_entries = [
             entry for entry in self.feed.entries if entry.link in new_entries_links
         ]
+
         if new_entries:
 
             logger.info(f"{self.name} has new entries")
             upload_blob(self.bucket_name,bucket_blob_name=f'{self.path}', local_blob_name=f'{self.local_path}.xml')
             
             for entry in new_entries:
-                self.post_telegram(entry)
+                if self.format_name == "vozpopuli" and entry.author in self.authors:
+                    self.post_telegram(entry)
                 
                 # if entry.author in self.authors and self.editorial == "right":
                     # self.create_tweet(entry)
@@ -141,9 +147,6 @@ class Newspaper:
 
             logger.info("Finished tweeting, updating RSS file of {self.name}")    
 
-            
-            
-            logger.info("Adding new entries")
             # Optionally process new_entries here
             return new_entries  # If you need to use them elsewhere
         else:
