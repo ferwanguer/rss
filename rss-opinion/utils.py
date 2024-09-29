@@ -110,7 +110,6 @@ def download_latest_blob(bucket_name: str, folder_prefix: str, local_blob_name: 
         # Download the latest blob to a local file
         latest_blob.download_to_filename(local_blob_name)
 
-        logger.info(f"Latest blob '{latest_blob.name}' downloaded to '{local_blob_name}'.")
 
         # Return the path to the local XML file
         return local_blob_name
