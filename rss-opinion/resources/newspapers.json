@@ -39,7 +39,6 @@
         "editorial": "right",
         "authors":[
             "Fernando Díaz Villanueva",
-            "Manuel Marín",
             "Gregorio Morán",
             "José Alejandro Vara",
             "José María Múgica",
@@ -48,6 +47,15 @@
             "Francisco Rosell",
             "Alejo Vidal-Quadras"
         ]
+    },
+    {
+        "name": "Libertad Digital",
+        "rss_link": "https://feeds2.feedburner.com/libertaddigital/opinion",
+        "editorial": "right",
+        "authors":[ "José García Domínguez",
+        "Agapito Maestre",
+        "Federico Jiménez Losantos"
+          ]  
     },
     {
         "name": "El País",
