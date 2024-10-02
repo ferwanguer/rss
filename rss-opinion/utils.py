@@ -1,12 +1,9 @@
-"""Useful functions dedicated to 
-"""
-
+""" Useful functions to perform the common processes """
+#pylint: disable=E0401,E0611
 import json
-from typing import Callable, List, Optional
-from google.cloud import secretmanager                                      #pylint: disable=E0401
-from google.cloud import storage
 import logging
 import colorlog
+from google.cloud import secretmanager, storage
 from google.oauth2 import service_account
 #-------------------------------------------------------------------------------------
 # Basic Logging configuration
@@ -40,7 +37,7 @@ logger.addHandler(handler)
 # Functions
 #-------------------------------------------------------------------------------------
 
-def get_secret(desired_key: str, project_name: str = "rss-opinion") -> str:
+def get_secret(desired_key: str, project_name: str = "rss-opinion") -> str: #pylint: disable=W0613
     """ Get a secret from the google secret manager.
 
     Args:
@@ -59,22 +56,23 @@ def get_secret(desired_key: str, project_name: str = "rss-opinion") -> str:
         service_account_info = json.loads(secret_string)
         credentials = service_account.Credentials.from_service_account_info(service_account_info)
         return credentials
-    else:
-        return response.payload.data.decode('UTF-8')
-
+    return response.payload.data.decode('UTF-8')
 
 
 def download_latest_blob(bucket_name: str, folder_prefix: str, local_blob_name: str) -> str:
     """
-    Downloads the latest uploaded blob from a specified folder in the bucket to a local file, filtering by blob name.
+    Downloads the latest uploaded blob from a specified folder in the bucket to a local file,
+    filtering by blob name.
     Returns the path to the local XML file to be processed.
-    If no matching blobs are found, logs that the provided XML is a dummy XML and uses 'resources/dummy.xml'.
+    If no matching blobs are found, logs that the provided XML is a dummy XML and uses
+    'resources/dummy.xml'.
 
     Parameters:
     - bucket_name: Name of the GCS bucket.
     - folder_prefix: The folder path within the bucket to search for blobs.
     - local_blob_name: Local path where the blob will be saved if found.
-    - name_filter: An optional callable that takes a blob name and returns True if the blob should be considered.
+    - name_filter: An optional callable that takes a blob name and returns True if the blob should
+    be considered.
 
     Returns:
     - xml_file_path: The path to the XML file to be processed.
@@ -91,29 +89,30 @@ def download_latest_blob(bucket_name: str, folder_prefix: str, local_blob_name: 
 
     # List all blobs in the specified folder
     blobs = list(bucket.list_blobs(prefix=folder_prefix))
-    
-    if not list(blobs):
 
-        logger.info( f"No  blobs found in the folder '{folder_prefix}' in bucket '{bucket_name}'.")
-    
+    if not blobs:
+        logger.info(
+            "No  blobs found in the folder '%s' in bucket '%s'.",
+            folder_prefix,
+            bucket_name
+        )
+
         # Use the dummy XML file
         dummy_xml_path = 'resources/dummy.xml'
-        logger.info(f"Using dummy XML file at '{dummy_xml_path}'.")
+        logger.info("Using dummy XML file at '%s'.", dummy_xml_path)
 
         # Return the path to the dummy XML file
         return dummy_xml_path
-    else:
-        
-        # Find the latest blob based on the updated time
-        latest_blob = max(blobs, key=lambda b: b.updated)
 
-        # Download the latest blob to a local file
-        latest_blob.download_to_filename(local_blob_name)
+    # Find the latest blob based on the updated time
+    latest_blob = max(blobs, key=lambda b: b.updated)
+
+    # Download the latest blob to a local file
+    latest_blob.download_to_filename(local_blob_name)
 
 
-        # Return the path to the local XML file
-        return local_blob_name
-
+    # Return the path to the local XML file
+    return local_blob_name
 
 
 def upload_blob(bucket_name, bucket_blob_name, local_blob_name):
@@ -143,12 +142,3 @@ def upload_blob(bucket_name, bucket_blob_name, local_blob_name):
     blob.upload_from_filename(local_blob_name)
 
     print(f"File '{local_blob_name}' uploaded to '{bucket_blob_name}'.")
-
-# Usage
-# if __name__ == "__main__":
-#     bucket_name = "your-bucket-name"
-#     bucket_blob_name = "path/to/your/blob"  # The path to your object in the bucket
-#     local_blob_name = "local/path/to/file.ext"
-#     key_path = "path/to/your/service-account-key.json"
-
-#     download_blob(bucket_name, bucket_blob_name, local_blob_name, key_path)

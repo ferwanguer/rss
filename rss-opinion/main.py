@@ -1,12 +1,10 @@
-import feedparser
-from utils import get_secret
+""" Main function """
 from models import load_newspapers_from_json
 
-project:str = "rss-opinion"
+project: str = "rss-opinion"
 
 
-
-def main(request):
+def main(request):                                                          #pylint: disable=W0613
     """Responds to any HTTP request.
     Args:
         request (flask.Request): HTTP request object.
@@ -16,7 +14,7 @@ def main(request):
         `make_response <http://flask.pocoo.org/docs/1.0/api/#flask.Flask.make_response>`.
     """
     newspapers_list = load_newspapers_from_json('resources/newspapers.json')
-    for newspaper in newspapers_list[:]:
+    for newspaper in newspapers_list:
         newspaper.compare_feeds()
 
     return 'FUNCTION FINISHED', 200
