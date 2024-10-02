@@ -101,16 +101,11 @@ class Newspaper:                                                            #pyl
         old_feed: feedparser.FeedParserDict = feedparser.parse(old_feed_path)
 
         # Extract unique identifiers
-        entries_links = set(entry.link for entry in self.feed.entries)
         old_entries_links = set(entry.link for entry in old_feed.entries)
-
-        intersection = entries_links.intersection(old_entries_links)
-        # Identify new entries
-        new_entries_links = entries_links - intersection
 
         # Retrieve the new entries
         new_entries = [
-            entry for entry in self.feed.entries if entry.link in new_entries_links
+            entry for entry in self.feed.entries if entry.link not in old_entries_links
         ]
 
         if new_entries:
