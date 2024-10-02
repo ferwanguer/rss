@@ -1,12 +1,10 @@
-import feedparser
-from utils import get_secret
+""" Main function """
 from models import load_newspapers_from_json
 
-project:str = "rss-opinion"
+project: str = "rss-opinion"
 
 
-
-def main(request):
+def main(request):                                                          #pylint: disable=W0613
     """Responds to any HTTP request.
     Args:
         request (flask.Request): HTTP request object.

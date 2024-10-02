@@ -1,19 +1,20 @@
-"""This module defines the main classes and methods that will be executed in main.py.
+""" This module defines the main classes and methods that will be executed in main.py.
 source.py is mainly for testing.
 """
-
+#pylint: disable=E0401,E0611
 import asyncio
-from datetime import datetime
 import json
+import logging
 import os
+from datetime import datetime
+from typing import Optional
+
+import colorlog
 import feedparser
 import requests
 from requests_oauthlib import OAuth1Session
-from utils import download_latest_blob, get_secret, upload_blob
-import logging
-import colorlog
-import tweepy
 from telegram import Bot
+from utils import download_latest_blob, get_secret, upload_blob
 
 #-------------------------------------------------------------------------------------
 # Basic Logging configuration
@@ -60,47 +61,52 @@ def load_newspapers_from_json(file_path: str):
 # Classes
 #-------------------------------------------------------------------------------------
 
-class Newspaper:
+class Newspaper:                                                            #pylint: disable=R0902
     """Defining class, it has the name, rss link and editorial
     """
     bucket_name = "rss-feed_opinion"
-    def __init__(self, name: str, rss_link: str, editorial:str, authors: list = []):
+    def __init__(self, name: str, rss_link: str, editorial:str, authors: Optional[list] = None):
         self.name = name
         self.formated_name = self.format_name()
         self.rss_link = rss_link
         self.editorial = editorial
         self.path = f"{self.formated_name}/{datetime.now().strftime('%Y%m%d%H%M%S')}"
-        self.local_path = "/tmp/" + self.path 
-        self.latest_feed_path_from_bucket = "/tmp/" +  f'{self.formated_name}/latest_feed' #Were the blob is downloaded locally 
-        self.authors = authors
+        self.local_path = "/tmp/" + self.path
+        #Were the blob is downloaded locally
+        self.latest_feed_path_from_bucket = "/tmp/" +  f'{self.formated_name}/latest_feed'
+        self.authors = authors or []
         self.telegram_chat_id = get_secret('telegram_chat_id')
         self.telegram_token = get_secret('telegram_token')
 
-        # We download the new feed.xml 
+        # We download the new feed.xml
 
-        response = requests.get(self.rss_link, 
-                                headers={
-    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.121 Safari/537.36'}
-                                )
+        response = requests.get(
+            self.rss_link,
+            headers={
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML'\
+                    ', like Gecko) Chrome/85.0.4183.121 Safari/537.36'
+            },
+            timeout=180
+        )
 
         if response.status_code == 200:
-            logger.info(f"Correctly downloaded RSS from {self.name}")
+            logger.info("Correctly downloaded RSS from %s", self.name)
 
             # Saving the resulting text into a file
             os.makedirs(os.path.dirname(f'{self.local_path}.xml'), exist_ok=True)
             with open(f'{self.local_path}.xml', 'w', encoding='utf-8') as file:
                 file.write(response.text)
-            
-            self.feed = feedparser.parse(f'{self.local_path}.xml')  
-        else: 
-            logger.error(f"Coud not retrieve {self.name} RSS")
+
+            self.feed = feedparser.parse(f'{self.local_path}.xml')
+        else:
+            logger.error("Coud not retrieve %s RSS", self.name)
 
 
     def __str__(self):
         """Nothing to comment here
         """
         return f"Newspaper(name={self.name}, rss_link={self.rss_link}, editorial={self.editorial})"
-    
+
     def format_name(self):
         """Formats the name. Useful to save the rss.
         """
@@ -133,36 +139,41 @@ class Newspaper:
 
         if new_entries:
 
-            logger.info(f"{self.name} has new entries")
-            upload_blob(self.bucket_name,bucket_blob_name=f'{self.path}', local_blob_name=f'{self.local_path}.xml')
-            
+            logger.info("%s has new entries", self.name)
+            upload_blob(
+                self.bucket_name,
+                bucket_blob_name=f'{self.path}',
+                local_blob_name=f'{self.local_path}.xml'
+            )
+
             for entry in new_entries:
                 if self.format_name == "vozpopuli" and entry.author in self.authors:
                     self.post_telegram(entry)
-                
+
                 if self.format_name !="vozpopuli":
                     self.post_telegram(entry)
-                
+
                 if entry.author in self.authors and self.editorial == "right":
                     self.create_tweet(entry)
-                
-                
 
-            logger.info(f"Finished tweeting, updating RSS file of {self.name}")    
+            logger.info("Finished tweeting, updating RSS file of %s", self.name)
 
             # Optionally process new_entries here
             return new_entries  # If you need to use them elsewhere
-        else:
-            logger.info(f"{self.name} no news")
+        logger.info("%s no news", self.name)
+        return None
+
 
     def create_text(self, entry):
+        """ Create text for publication """
         if self.formated_name != "elabc":
             return f'Nuevo artículo de {entry.author} en {self.name}: {entry.title}\n {entry.link}'
-        else:
-            return f'Nuevo artículo de {entry.author} en {self.name}: {entry.title}\n {entry.link}\n\n {entry.description}'
-    
-    
+        return f'Nuevo artículo de {entry.author} en {self.name}: {entry.title}\n {entry.link}'\
+                f'\n\n {entry.description}'
+
+
     def create_tweet(self, entry):
+        """ CReate a tweet to publish """
         text = f'Nuevo artículo de {entry.author} en {self.name}: {entry.title}\n {entry.link}'
 
         payload = {"text": text}
@@ -174,7 +185,7 @@ class Newspaper:
             consumer_secret = get_secret("consumer_secret")
         else:
             logger.warning("LEFT TWEETS NOT IMPLEMENTED YET")
-            return None
+            return
             # access_token = get_secret("oauth_token")
             # access_token_secret = get_secret("oauth_token_secret")
             # consumer_key = get_secret("consumer_key")
@@ -196,32 +207,22 @@ class Newspaper:
             )
 
             if response.status_code != 201:
-                raise Exception(
-                    "Request returned an error: {} {}".format(response.status_code, response.text)
-                    )
-            else:      
-                logger.info(f"Successful tweet of newspaper {self.name} ")
-        except Exception as e:
-             logger.error(f"FAILED TO POST TWEET: {e}")
+                raise ConnectionRefusedError(
+                    f"Request returned an error: {response.status_code} {response.text}"
+                )
+            logger.info("Successful tweet of newspaper %s ", self.name)
+        except Exception as e:                                              #pylint: disable=W0718
+            logger.error("FAILED TO POST TWEET: %s", e)
+        return
 
     def post_telegram(self, entry):
-
+        """ Send message to telegram """
         bot = Bot(token=self.telegram_token)
         chat_id = "@opderecha" if self.editorial =="right" else "@opizquierda"
         # Send a message
         try:
             message = asyncio.run(bot.send_message(chat_id=chat_id, text=self.create_text(entry)))
             if message.message_id:
-                logger.info(f"TELEGRAM POSTED. Message ID: {message.message_id}")
-        except Exception as e:
-            logger.error(f"TELEGRAM FAILED.{e}")
-
-
-
-
-
-
-
-
-
-
+                logger.info("TELEGRAM POSTED. Message ID: %s", message.message_id)
+        except Exception as e:                                              #pylint: disable=W0718
+            logger.error("TELEGRAM FAILED. %s", e)
