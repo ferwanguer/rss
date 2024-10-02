@@ -118,10 +118,10 @@ class Newspaper:                                                            #pyl
             )
 
             for entry in new_entries:
-                if self.format_name() == "vozpopuli" and entry.author in self.authors:
+                if self.formated_name == "vozpopuli" and entry.author in self.authors:
                     self.post_telegram(entry)
 
-                if self.format_name() !="vozpopuli":
+                if self.formated_name !="vozpopuli":
                     self.post_telegram(entry)
 
                 if entry.author in self.authors and self.editorial == "right":
@@ -157,10 +157,6 @@ class Newspaper:                                                            #pyl
         else:
             logger.warning("LEFT TWEETS NOT IMPLEMENTED YET")
             return
-            # access_token = get_secret("oauth_token")
-            # access_token_secret = get_secret("oauth_token_secret")
-            # consumer_key = get_secret("consumer_key")
-            # consumer_secret = get_secret("consumer_secret")
 
         try:
             # Make the request

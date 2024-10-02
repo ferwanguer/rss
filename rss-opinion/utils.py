@@ -142,12 +142,3 @@ def upload_blob(bucket_name, bucket_blob_name, local_blob_name):
     blob.upload_from_filename(local_blob_name)
 
     print(f"File '{local_blob_name}' uploaded to '{bucket_blob_name}'.")
-
-# Usage
-# if __name__ == "__main__":
-#     bucket_name = "your-bucket-name"
-#     bucket_blob_name = "path/to/your/blob"  # The path to your object in the bucket
-#     local_blob_name = "local/path/to/file.ext"
-#     key_path = "path/to/your/service-account-key.json"
-
-#     download_blob(bucket_name, bucket_blob_name, local_blob_name, key_path)
