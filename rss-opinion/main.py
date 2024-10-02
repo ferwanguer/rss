@@ -14,7 +14,7 @@ def main(request):                                                          #pyl
         `make_response <http://flask.pocoo.org/docs/1.0/api/#flask.Flask.make_response>`.
     """
     newspapers_list = load_newspapers_from_json('resources/newspapers.json')
-    for newspaper in newspapers_list[:]:
+    for newspaper in newspapers_list:
         newspaper.compare_feeds()
 
     return 'FUNCTION FINISHED', 200

@@ -7,7 +7,7 @@ import json
 import logging
 import os
 from datetime import datetime
-from typing import Optional
+from typing import List, Optional
 
 import colorlog
 import feedparser
@@ -45,19 +45,6 @@ handler.setFormatter(formatter)
 logger.addHandler(handler)
 
 #-------------------------------------------------------------------------------------
-# Functions
-#-------------------------------------------------------------------------------------
-
-
-def load_newspapers_from_json(file_path: str):
-    """ This method loads the json with the newspaper attributes and outputs a list of Newspapers.
-    """
-    with open(file_path, 'r', encoding="utf-8") as file:
-        newspapers_data = json.load(file)
-        newspapers = [Newspaper(**data) for data in newspapers_data]
-    return newspapers
-
-#-------------------------------------------------------------------------------------
 # Classes
 #-------------------------------------------------------------------------------------
 
@@ -67,7 +54,7 @@ class Newspaper:                                                            #pyl
     bucket_name = "rss-feed_opinion"
     def __init__(self, name: str, rss_link: str, editorial:str, authors: Optional[list] = None):
         self.name = name
-        self.formated_name = self.format_name()
+        self.formated_name = self.name.lower().replace(" ", "")
         self.rss_link = rss_link
         self.editorial = editorial
         self.path = f"{self.formated_name}/{datetime.now().strftime('%Y%m%d%H%M%S')}"
@@ -75,11 +62,9 @@ class Newspaper:                                                            #pyl
         #Were the blob is downloaded locally
         self.latest_feed_path_from_bucket = "/tmp/" +  f'{self.formated_name}/latest_feed'
         self.authors = authors or []
-        self.telegram_chat_id = get_secret('telegram_chat_id')
         self.telegram_token = get_secret('telegram_token')
 
         # We download the new feed.xml
-
         response = requests.get(
             self.rss_link,
             headers={
@@ -97,32 +82,23 @@ class Newspaper:                                                            #pyl
             with open(f'{self.local_path}.xml', 'w', encoding='utf-8') as file:
                 file.write(response.text)
 
-            self.feed = feedparser.parse(f'{self.local_path}.xml')
+            self.feed: feedparser.FeedParserDict = feedparser.parse(f'{self.local_path}.xml')
         else:
             logger.error("Coud not retrieve %s RSS", self.name)
 
 
     def __str__(self):
-        """Nothing to comment here
-        """
         return f"Newspaper(name={self.name}, rss_link={self.rss_link}, editorial={self.editorial})"
 
-    def format_name(self):
-        """Formats the name. Useful to save the rss.
-        """
-        transformed_string = self.name.lower().replace(" ", "")
-
-        return transformed_string
-
     def compare_feeds(self):
-        """Compare the most recent feed with the latest one saved (if it exists already)"""
+        """ Compare the most recent feed with the latest one saved (if it exists already) """
 
         old_feed_path = download_latest_blob(
             self.bucket_name,
             folder_prefix=self.formated_name,
             local_blob_name=f'{self.latest_feed_path_from_bucket}.xml'
         )
-        old_feed = feedparser.parse(old_feed_path)
+        old_feed: feedparser.FeedParserDict = feedparser.parse(old_feed_path)
 
         # Extract unique identifiers
         entries_links = set(entry.link for entry in self.feed.entries)
@@ -226,3 +202,16 @@ class Newspaper:                                                            #pyl
                 logger.info("TELEGRAM POSTED. Message ID: %s", message.message_id)
         except Exception as e:                                              #pylint: disable=W0718
             logger.error("TELEGRAM FAILED. %s", e)
+
+
+#-------------------------------------------------------------------------------------
+# Functions
+#-------------------------------------------------------------------------------------
+
+def load_newspapers_from_json(file_path: str) -> List[Newspaper]:
+    """ This method loads the json with the newspaper attributes and outputs a list of Newspapers.
+    """
+    with open(file_path, 'r', encoding="utf-8") as file:
+        newspapers_data = json.load(file)
+        newspapers = [Newspaper(**data) for data in newspapers_data]
+    return newspapers

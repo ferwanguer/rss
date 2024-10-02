@@ -59,7 +59,6 @@ def get_secret(desired_key: str, project_name: str = "rss-opinion") -> str: #pyl
     return response.payload.data.decode('UTF-8')
 
 
-
 def download_latest_blob(bucket_name: str, folder_prefix: str, local_blob_name: str) -> str:
     """
     Downloads the latest uploaded blob from a specified folder in the bucket to a local file,
@@ -91,8 +90,7 @@ def download_latest_blob(bucket_name: str, folder_prefix: str, local_blob_name: 
     # List all blobs in the specified folder
     blobs = list(bucket.list_blobs(prefix=folder_prefix))
 
-    if not list(blobs):
-
+    if not blobs:
         logger.info(
             "No  blobs found in the folder '%s' in bucket '%s'.",
             folder_prefix,
@@ -115,7 +113,6 @@ def download_latest_blob(bucket_name: str, folder_prefix: str, local_blob_name: 
 
     # Return the path to the local XML file
     return local_blob_name
-
 
 
 def upload_blob(bucket_name, bucket_blob_name, local_blob_name):
