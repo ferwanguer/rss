@@ -147,10 +147,10 @@ class Newspaper:                                                            #pyl
             )
 
             for entry in new_entries:
-                if self.format_name == "vozpopuli" and entry.author in self.authors:
+                if self.format_name() == "vozpopuli" and entry.author in self.authors:
                     self.post_telegram(entry)
 
-                if self.format_name !="vozpopuli":
+                if self.format_name() !="vozpopuli":
                     self.post_telegram(entry)
 
                 if entry.author in self.authors and self.editorial == "right":
